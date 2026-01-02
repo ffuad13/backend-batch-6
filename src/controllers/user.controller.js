@@ -24,4 +24,4 @@ const user = (req, res, next) => {
 	return res.json(user)
 }
 
-export { users, user };
+module.exports =  { users, user };

@@ -11,4 +11,4 @@ const globalError = (err, req, res, next) => {
 	})
 }
 
-export { errorRoute, globalError };
+module.exports =  { errorRoute, globalError };
