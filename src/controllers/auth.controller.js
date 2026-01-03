@@ -1,13 +1,6 @@
-const { PrismaClient } = require('../generated/prisma');
-const { PrismaPg } = require('@prisma/adapter-pg');
+const { prisma } = require('../config/database');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken')
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL,
-});
-
-const prisma = new PrismaClient({ adapter });
+const jwt = require('jsonwebtoken');
 
 const register = async (req, res, next) => {
   const { fullName, userName, email, password } = req.body;
@@ -21,16 +14,21 @@ const register = async (req, res, next) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   try {
+    const getDefaultRole = await (
+      await prisma.role.findMany()
+    ).filter((x) => x.name === 'user');
+
     const user = await prisma.user.create({
       data: {
         fullname: fullName,
         username: userName,
         email,
         password: hashedPassword,
+        roleId: getDefaultRole[0].id,
       },
     });
 
-    res.json({
+    return res.status(201).json({
       message: 'register berhasil',
     });
   } catch (error) {
@@ -53,33 +51,37 @@ const login = async (req, res, next) => {
   }
 
   try {
-		const result = await prisma.user.findUnique({
-			where: {
-				email
-			}
-		})
+    const result = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
 
-		if (!result) {
-			const err = new Error("Email tidak ditemukan")
-			err.status = 404
-			throw err
-		}
+    if (!result) {
+      const err = new Error('Email tidak ditemukan');
+      err.status = 404;
+      throw err;
+    }
 
-		const isValidPassword = bcrypt.compareSync(password, result.password)
-		if (!isValidPassword) {
-			const err = new Error('Password salah');
+    const isValidPassword = bcrypt.compareSync(password, result.password);
+    if (!isValidPassword) {
+      const err = new Error('Password salah');
       err.status = 401;
       throw err;
-		}
+    }
 
-		delete result.password
+    delete result.password;
 
-		const token = jwt.sign({id: result.id, username: result.username, role: result.roleId}, process.env.JWT_SECRET, {expiresIn: "1h"})
+    const token = jwt.sign(
+      { id: result.id, username: result.username, role: result.roleId },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
     return res.json({
       message: 'Login berhasil',
-			data: result,
-			token
+      data: result,
+      token,
     });
   } catch (error) {
     next(error);
@@ -102,4 +104,40 @@ const logout = (req, res, next) => {
   }
 };
 
-module.exports = { register, login, logout };
+const createRole = async (req, res, next) => {
+  // buat env api key untuk pembuatan role
+  const { role } = req.body;
+  if (!role) {
+    return res.status(400).json({
+      message: 'Nama role harus diisi',
+    });
+  }
+
+  try {
+    const isRoleExist = await prisma.role.findFirst({
+      where: {
+        name: role,
+      },
+    });
+    if (isRoleExist) {
+      return res.status(400).json({
+        message: 'Role sudah ada, tidak dapat membuat role baru',
+      });
+    }
+
+    const result = await prisma.role.create({
+      data: {
+        name: role,
+      },
+    });
+
+    return res.status(201).json({
+      message: 'role created',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { register, login, logout, createRole };

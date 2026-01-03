@@ -7,6 +7,8 @@ const PORT = process.env.SERVER_PORT;
 const router = require('./routes/router');
 const userRouter = require('./routes/user.router');
 const authRouter = require('./routes/auth.router');
+const productRouter = require('./routes/product.router')
+const transactionRouter = require('./routes/transaction.router')
 const { errorRoute, globalError } = require('./middlewares/errorHandler');
 
 const app = express();
@@ -24,6 +26,8 @@ app.use('/auth', authRouter)
 app.get('/data', (req, res, next) => { //controller
   res.json({ message: 'ini data' });
 });
+app.use('/product', productRouter)
+app.use('/transaction', transactionRouter)
 app.get('/*splat', errorRoute)
 app.use(globalError)
 
