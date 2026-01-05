@@ -1,0 +1,24 @@
+meta {
+  name: Create Product
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:4000/product
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Ayam Geprek",
+    "price": 15000,
+    "categoryId": "d444eeaa-5d7d-4487-ad47-e12af883899e"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

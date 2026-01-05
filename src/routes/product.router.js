@@ -3,7 +3,7 @@ const Controller = require('../controllers/product.controller')
 const { verify } = require('../middlewares/verifyToken')
 
 const router = express.Router()
-router.post('/', Controller.createProduct)
+router.post('/', verify, Controller.createProduct)
 router.get('/', verify, Controller.allProduct)
 router.post('/category', Controller.createProductCategory)
 router.get('/category', Controller.allProductCategory)

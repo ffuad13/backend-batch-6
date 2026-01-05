@@ -1,0 +1,23 @@
+meta {
+  name: Logout
+  type: http
+  seq: 3
+}
+
+delete {
+  url: http://localhost:4000/auth/logout
+  body: none
+  auth: inherit
+}
+
+body:json {
+  {
+    "email": "faiz@fuadi.com",
+    "password": "Rahasia123"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -106,6 +106,7 @@ const logout = (req, res, next) => {
 
 const createRole = async (req, res, next) => {
   // buat env api key untuk pembuatan role
+  // buat aturan agar hanya admin yang dapat membuat role
   const { role } = req.body;
   if (!role) {
     return res.status(400).json({

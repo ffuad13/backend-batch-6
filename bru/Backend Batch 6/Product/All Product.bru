@@ -1,0 +1,26 @@
+meta {
+  name: All Product
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:4000/product
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZmN2I5NWNhLWFhN2YtNGUzYy05NGYwLTA3YTgyN2I3MzZjMCIsInVzZXJuYW1lIjoiWXVkMTIiLCJyb2xlIjoiODIyMWYxZjgtZWExNS00NjI1LTliYmEtZGYyZjE3OThlMzQyIiwiaWF0IjoxNzY3NDQ5NTI1LCJleHAiOjE3Njc0NTMxMjV9.XPmtHVIDPhkDVejcQ_XpS2J5NxZXOI3qCWTiIYi-dSk
+}
+
+body:json {
+  {
+    "name": "Makanan"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

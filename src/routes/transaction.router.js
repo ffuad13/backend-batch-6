@@ -4,6 +4,7 @@ const { verify } = require('../middlewares/verifyToken')
 
 const router = express.Router()
 router.post('/', verify, Controller.createTransaction)
+router.get('/', verify, Controller.allTransaction)
 
 
 module.exports = router
