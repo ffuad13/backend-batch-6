@@ -2,11 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Project backend sinau koding batch 6",
-  "main": "src/index.js",
+  "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "nodemon src/index.js",
-    "build": "node src/index.js"
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js",
+    "postinstall": "prisma generate"
   },
   "author": "Faizul Fuadi",
   "license": "MIT",
