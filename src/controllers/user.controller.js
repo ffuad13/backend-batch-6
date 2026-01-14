@@ -1,3 +1,5 @@
+const { prisma } = require("../config/database");
+
 const usersData = [
   { nama: 'Faizul', Alamat: 'Sumbawa Barat' },
   { nama: 'Rani', Alamat: 'Sumbawa Barat' },
@@ -24,4 +26,49 @@ const user = (req, res, next) => {
 	return res.json(user)
 }
 
-module.exports =  { users, user };
+const uploadUser = async (req, res, next) => {
+	try {
+		const {id} = req.user
+		const {path} = req.file
+
+		const updateUser = await prisma.user.update({
+			where: {id},
+			data: {imageurl: path}
+		})
+
+		return res.status(201).json({
+			message: "Upload user profile berhasil",
+			data: updateUser
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
+const profile = async (req, res, next) => {
+	try {
+		const {id} = req.user
+
+
+		const getUser = await prisma.user.findFirst({
+			where: {
+				id
+			},
+			include: {
+				role: true
+			}
+		})
+
+		delete getUser.id
+		delete getUser.password
+
+		return res.status(200).json({
+			message: "berhasil get data user",
+			data: getUser
+		})
+	} catch (error) {
+		next(error)
+	}
+}
+
+module.exports =  { users, user, uploadUser, profile };

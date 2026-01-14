@@ -22,9 +22,11 @@ model User {
   username String
   email    String   @unique
   password String
+  imageurl String?
   role     Role?    @relation(fields: [roleId], references: [id])
   roleId   String?
   transactions Transaction[]
+  refreshTokens RefreshToken[]
 }
 
 model Category {
@@ -37,6 +39,7 @@ model Product {
   id         String      @id @default(uuid())
   name       String
   price      Decimal     @db.Decimal(10, 2)
+  imageurl   String?
   category   Category?   @relation(fields: [categoryId], references: [id])
   categoryId String?
   transactions Transaction[]
@@ -51,4 +54,15 @@ model Transaction {
   quantity        Int
   total_price     Decimal   @db.Decimal(10, 2)
   transaction_date DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  revokedAt  DateTime?
+  replacedBy String?
 }
