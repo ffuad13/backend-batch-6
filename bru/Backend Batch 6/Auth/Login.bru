@@ -10,10 +10,22 @@ post {
   auth: inherit
 }
 
+headers {
+  : 
+}
+
 body:json {
   {
     "email": "yudd@fuadi.com",
     "password": "Rahasia123"
+  }
+}
+
+script:post-response {
+  const cookies = res.getHeader('set-cookie');
+  
+  if(cookies) {
+    bru.setVar("cookie", cookies.join('; '));
   }
 }
 
